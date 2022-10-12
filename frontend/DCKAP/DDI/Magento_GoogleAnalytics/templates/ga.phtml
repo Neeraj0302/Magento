@@ -1,0 +1,33 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+use DCKAP\Theme\Block\Ga;
+use Magento\Cookie\Helper\Cookie;
+?>
+<?php /** @var $block Ga */ ?>
+<?php $accountId = $block->getConfig(\Magento\GoogleAnalytics\Helper\Data::XML_PATH_ACCOUNT);
+$actionName = $block->getFullActionName();
+?>
+<!--BEGIN GOOGLE ANALYTICS CODE Inside theme -->
+<?php
+if(!($actionName =='dckapcheckout_index_transaction' || $actionName=='dckapcheckout_payinvoice_transaction')) {
+?>
+<script type="text/x-magento-init">
+{
+    "*": {
+            "Magento_GoogleAnalytics/js/google-analytics": {
+            "isCookieRestrictionModeEnabled": <?= (int)$block->isCookieRestrictionModeEnabled() ?>,
+            "currentWebsite": <?= (int)$block->getCurrentWebsiteId() ?>,
+            "cookieName": "<?= /* @noEscape */ Cookie::IS_USER_ALLOWED_SAVE_COOKIE ?>",
+            "ordersTrackingData": <?= /* @noEscape */ json_encode($block->getOrdersTrackingData()) ?>,
+            "pageTrackingData": <?= /* @noEscape */ json_encode($block->getPageTrackingData($accountId)) ?>
+        }
+    }
+}
+</script>
+<?php
+}?>
+<!-- END GOOGLE ANALYTICS CODE -->

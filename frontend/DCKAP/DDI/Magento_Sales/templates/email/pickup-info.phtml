@@ -1,0 +1,9 @@
+<?php
+$order = $this->getData('order');
+/* content change for pickup and shipping */
+if($this->getData('order')->getShippingMethod() == 'ddistorepickup_ddistorepickup') {
+    echo "We will send you a notification once your items are ready for pickup.";
+} else {
+    echo "Once your package ships we will send you a tracking number.";
+}
+?>

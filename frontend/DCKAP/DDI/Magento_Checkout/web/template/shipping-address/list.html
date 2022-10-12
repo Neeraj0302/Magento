@@ -1,0 +1,98 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<div class="textarea-for-shipping-address">
+	<textarea type="add" name="add" id="add" readonly>
+	</textarea>
+</div>
+<div class="field field-select-shipping" id="hide-show-search-address" style=" display: none;">
+<div class="control" data-bind="if: (shippingAddressOptions.length > 1)">
+<select class="select" name="shipping_address_id" id="search-shiping-address" data-bind="
+options: shippingAddressOptions,
+optionsText: shippingaddressOptionsText,
+value: selectedShippingAddress,
+event: {change: onShippingAddressChange(selectedShippingAddress())};
+"></select>
+</div>
+</div>
+<!-- ko if: ((method.method_code + '_' + method.carrier_code == "ddistorepickup_ddistorepickup") && element.selectedMethod() == "ddistorepickup_ddistorepickup") -->
+<div>
+	<table>
+		
+<tr class="ddi-store-pickup-shipping-information" >
+
+    <td colspan="4">
+        <div id="ddi-store-pickup-details-list-wrapper" data-bind="visible: method.method_code + '_' + method.carrier_code == 'ddistorepickup_ddistorepickup'">
+            <div class="ddi-store-pickup-help-text" data-bind="visible:element.rates().length == 1, text:element.getMdsCustomShippingMessage()"></div>
+            <!-- ko foreach: element.getRegion('ddi-store-pickup') -->
+                <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+              <div>
+                <strong>Local Pickup Order Notification:</strong>
+                <p>Please Note:&nbsp;Some items may not be available for immediate pickup.&nbsp;&nbsp;Please enter your email and/or mobile number to receive a notification when your order is ready to pick up</p>
+            </div>
+         <div class="field _required" name="ddiShippingMethod.ddi_store_pickup[ddi_pref_warehouse]">
+                <label class="label">
+                    <span>Preferred Warehouse</span>
+                </label>
+                <select class="select" id="warehouselist" name="ddi_store_pickup[ddi_pref_warehouse]" >
+                   
+                </select> 
+                <div class="field-error" id="error-pre-warehouse" style="display:none;">
+                    <span id="error-pre-warehouse-span"></span>
+                </div>
+            </div>
+            <div class="field _required" name="mdsStorePickupShippingMethod.ddi_store_pickup[ddi_delivery_contact_email]">
+                <label class="label">
+                    <span>Email Notification</span>
+                </label>
+                <input name="ddi_store_pickup[ddi_delivery_contact_email]" id="ddi-store-pickup" title="local pickup" value="" type="email">
+                <div class="field-error" id="error-ddi-email" style="display:none;">
+                    <span id="error-ddi-email-span"></span>
+                </div>
+            </div>
+
+        </div>
+    </td>
+</tr>
+<tr class="ddi-store-pickup-contact-no">
+    <td colspan="4">
+         <label class="label">
+            <span>Mobile (SMS) Notification</span>
+        </label>
+        <input type="text" name="ddi_store_pickup[ddi_delivery_contact_no]" id="ddi-contact-no" title="mobile number" value="">
+        <div class="field-error" id="error-ddi-contact" style="display:none;">
+        <span id="error-ddi-contact-span"></span>
+    </div>
+    </td>
+</tr>
+<tr class="ddi-store-pickup-date">
+    <td colspan="4">
+         <label class="label">
+            <span>Pickup Date</span>
+        </label>
+        <input type="text" name="ddi_store_pickup[ddi_pickup_date]" id="ddi_pickup_date" title="
+        Pickup Date" autocomplete="off">
+        <div class="field-error" id="error-ddi-pickup-date" style="display:none;">
+        <span id="error-ddi-contact-pickup-date"></span>
+    </div>
+    </td>
+</tr>
+	</table>
+</div>
+<!-- /ko -->
+<!-- ko if: (visible)-->
+<div class="field addresses">
+    <div class="control">
+        <div class="shipping-address-items" id="custom-address-items" style=" display: none;">
+            <!-- ko foreach: { data: elems, as: 'element' } -->
+            <!-- ko template: element.getTemplate() --><!-- /ko -->
+            <!-- /ko -->
+        </div>
+    </div>
+</div>
+<!-- /ko -->

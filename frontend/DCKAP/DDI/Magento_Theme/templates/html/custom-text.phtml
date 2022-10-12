@@ -1,0 +1,16 @@
+<?php $tagLine = $this->helper('DCKAP\Extension\Helper\Data')->getTagLine();
+if ($tagLine && $tagLine != '') { ?>
+<div class="custom-tagline">
+    <p><?php echo $tagLine; ?></p>
+</div>
+<?php } ?>
+<?php $getData = $this->helper('DCKAP\MultiAccount\Helper\Data');
+    if($getData->IsCustomerLogged() && $getData->IsMultiAccount()==2){
+    ?>
+    <div class="multi-user-company">
+        <?php
+            echo "Shopping in: <span>".$getData->getMultiAccountData('billCompanyName')."</span>";
+        ?>
+    </div>
+    <?php } ?>
+

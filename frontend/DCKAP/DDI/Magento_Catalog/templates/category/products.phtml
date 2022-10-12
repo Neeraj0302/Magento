@@ -1,0 +1,52 @@
+<?php
+	/**
+	 * Copyright © Magento, Inc. All rights reserved.
+	 * See COPYING.txt for license details.
+	 */
+?>
+<?php
+	/**
+	 * Category view template
+	 *
+	 * @var $block \Magento\Catalog\Block\Category\View
+	 */
+?>
+<?php
+$manufacturer = $this->getRequest()->getParam('manufacturer');
+$subcats = $block->getSubCategories();
+if ($subcats && (count($subcats) > 0) && !$manufacturer) {
+    $imageConfig = $block->getSubcategoryImageAttributes();
+    $categoryPlaceHolderImage = $block->getCategoryPlaceHolderImage();
+    ?>
+    <div class="product details product-item-details">
+        <ul class="cata-item-list">
+            <?php foreach ($subcats as $subcat) {
+                if ($subcat->getIsActive()) {
+	                if(strpos($block->getCategoryImage($subcat->getId()),'media/catalog')  !== false ){
+		                $string_before = $block->getCategoryImage($subcat->getId());
+		                $string_after = str_replace( '/pub/media/catalog/category/', "", $string_before );
+		                $imageResize = $block->getResizeImage($string_after, $imageConfig['width'], $imageConfig['height']);
+	                } else {
+
+		                $imageResize = $block->getResizeImage($block->getCategoryImage($subcat->getId()), $imageConfig['width'], $imageConfig['height']);
+	                }
+	                ?>
+                    <li>
+                        <span class="product-image">
+                            <a href="<?= $subcat->getUrl(); ?>" title="<?= $subcat->getName() ?>">
+                               <img src="<?= ($imageResize) ? $imageResize : $categoryPlaceHolderImage; ?>" alt="<?= $subcat->getName() ?>"/>
+                            </a>
+                        </span>
+                            <span class="product-item-name">
+                            <a href="<?= $subcat->getUrl() ?>" class="product-item-link"><?= $subcat->getName(); ?></a>
+                        </span>
+                        </li>
+					<?php }
+				} ?>
+            </ul>
+        </div>
+	<?php } else { ?>
+		<?php if (!$block->isContentMode() || $block->isMixedMode()) : ?>
+			<?= $block->getProductListHtml() ?>
+		<?php endif; ?>
+	<?php } ?>

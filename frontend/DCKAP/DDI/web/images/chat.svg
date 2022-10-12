@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+    <title>Mask</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M32.9190387,18.4578138 C32.9190387,20.9224705 30.0259644,22.9156276 26.4600821,22.9156276 C25.3768612,22.9156276 24.3541931,22.7313142 23.4571158,22.4055509 C22.5533104,23.0742229 21.4431772,23.4835703 20.2635206,23.599302 C20.1469005,23.612161 20.0347658,23.5392929 20.0056108,23.4342771 C19.9764558,23.3271181 20.0661635,23.2606796 20.1536286,23.1813819 C20.5864684,22.7870369 21.1112586,22.478419 21.3175864,21.1539339 C20.4922753,20.4059642 20.0011254,19.4715378 20.0011254,18.4578138 C20.0011254,15.9953003 22.8941998,14 26.4600821,14 C30.0259644,14 32.9190387,15.9953003 32.9190387,18.4578138 Z" id="path-1"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Page-Elements/Desktop/Footer-XL" transform="translate(-1158.000000, -212.000000)">
+            <g id="Page-Elements/Mobile/Footer">
+                <g id="Chat" transform="translate(1138.000000, 198.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Mask" fill="#FFFFFF" xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

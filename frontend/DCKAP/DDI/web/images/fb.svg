@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+    <title>Mask</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M163,138.323214 L163,159.671429 C163,160.405357 162.405357,160.994643 161.676786,160.994643 L155.558929,160.994643 L155.558929,151.705357 L158.676786,151.705357 L159.142857,148.083929 L155.553571,148.083929 L155.553571,145.769643 C155.553571,144.719643 155.842857,144.007143 157.348214,144.007143 L159.266071,144.007143 L159.266071,140.766071 C158.933929,140.723214 157.798214,140.621429 156.469643,140.621429 C153.705357,140.621429 151.808929,142.308929 151.808929,145.410714 L151.808929,148.083929 L148.680357,148.083929 L148.680357,151.705357 L151.808929,151.705357 L151.808929,161 L140.323214,161 C139.594643,161 139,160.405357 139,159.676786 L139,138.323214 C139,137.594643 139.594643,137 140.323214,137 L161.671429,137 C162.405357,137 163,137.594643 163,138.323214 Z" id="path-1"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Page-Elements/Desktop/Footer-XL" transform="translate(-139.000000, -137.000000)">
+            <g id="Page-Elements/Mobile/Footer">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" fill="#E9E9E9" fill-rule="nonzero" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>

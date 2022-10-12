@@ -1,0 +1,72 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+<?php $_product = $block->getProduct(); ?>
+<?php
+$offline = 0;
+if($offline = $_product->getCustomAttribute('offline')) {
+    $offline = $_product->getData('offline');
+}
+if (!$offline || $offline == "0"):
+    ?>
+    <?php $buttonTitle = __('Add to Cart'); ?>
+    <?php if ($_product->isSaleable()): ?>
+    <div class="box-tocart">
+         <span class="pdp_erp_out_of_stock_check" style="display: none;color:red"><strong>The requested quantity is not available.
+</strong></span>
+        <div class="fieldset">
+            <?php if ($block->shouldRenderQuantity()): ?>
+
+                <div class="field qty">
+                    <label class="label" for="qty"><span><?= /* @escapeNotVerified */ __('Qty') ?></span></label>
+                    <div class="control">
+                        <input type="number"
+                               name="qty"
+                               id="qty"
+                               min="1"
+                               required="true"
+                               value="<?= /* @escapeNotVerified */ $block->getProductDefaultQty() * 1 ?>"
+                               title="<?= /* @escapeNotVerified */ __('Qty') ?>"
+                               class="input-text qty"
+                               data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>"
+                        />
+                    </div>
+                </div>
+
+                <?php
+                echo $this->getLayout()
+                    ->createBlock('DCKAP\Catalog\Block\Index\Product')
+                    ->setTemplate('DCKAP_Catalog::pdp_uom.phtml')
+                    ->toHtml();
+                ?>
+            <?php endif; ?>
+            <div class="actions">
+                <button type="submit"
+                        title="<?= /* @escapeNotVerified */ $buttonTitle ?>"
+                        class="action primary tocart"
+                        id="product-addtocart-button">
+                    <span><?= /* @escapeNotVerified */ $buttonTitle ?></span>
+                </button>
+                <?= $block->getChildHtml('', true) ?>
+            </div>
+
+        </div>
+    </div>
+
+<?php endif; ?>
+<?php endif; ?>
+<script type="text/x-magento-init">
+{
+    "#product_addtocart_form": {
+        "Magento_Catalog/js/validate-product": {}
+    }
+}
+</script>
+

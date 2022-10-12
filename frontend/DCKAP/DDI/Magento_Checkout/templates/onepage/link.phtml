@@ -1,0 +1,34 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Checkout\Block\Onepage\Link */
+$orderApprovalHelper = $this->helper('DCKAP\OrderApproval\Helper\Data');
+$orderApprovalStatus = $orderApprovalHelper->getDefaultOrderApprovalStatus();
+$orderApproverList = $orderApprovalHelper->getApproverInfo();
+$boolIsFromOrderEdit = $orderApprovalHelper->getIsFromOrderApprovalEdit();
+
+?>
+<?php if ($block->isPossibleOnepageCheckout()) :?>
+    <button type="button"
+            data-role="proceed-to-checkout"
+            title="<?= $block->escapeHtmlAttr(__('Proceed to Checkout')) ?>"
+            data-mage-init='{
+                "Magento_Checkout/js/proceed-to-checkout":{
+                    "checkoutUrl":"<?= $block->escapeJs($block->escapeUrl($block->getCheckoutUrl())) ?>"
+                }
+            }'
+            class="action primary checkout<?= ($block->isDisabled()) ? ' disabled' : '' ?>"
+            <?php if ($block->isDisabled()) :?>
+                disabled="disabled"
+            <?php endif; ?>>
+        <span><?php
+            if (!($orderApproverList) || $orderApprovalStatus || true == $boolIsFromOrderEdit ) {
+                echo $block->escapeHtml(__('Proceed to Checkout'));
+            } else {
+                echo $block->escapeHtml(__('Request Order Approval'));
+            } ?></span>
+    </button>
+<?php endif?>

@@ -1,0 +1,162 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Form\Login $block */
+?>
+<div class="block block-customer-login">
+    <div class="block-title">
+        <strong id="block-customer-login-heading" role="heading" aria-level="2"><?= $block->escapeHtml(__('Registered Customers')) ?></strong>
+    </div>
+    <div class="block-content" aria-labelledby="block-customer-login-heading">
+        <form class="form form-login"
+              action="<?= $block->escapeUrl($block->getPostActionUrl()) ?>"
+              method="post"
+              id="login-form"
+              data-mage-init='{"validation":{}}'>
+            <?= $block->getBlockHtml('formkey') ?>
+            <fieldset class="fieldset login" data-hasrequired="<?= $block->escapeHtml(__('* Required Fields')) ?>">
+                <div class="field note"><?= $block->escapeHtml(__('If you have an account, sign in with your email address.')) ?></div>
+                <div class="field email required">
+                    <label class="label" for="email"><span><?= $block->escapeHtml(__('Email')) ?></span></label>
+                    <div class="control">
+                        <input name="login[username]" value="<?= $block->escapeHtmlAttr($block->getUsername()) ?>" <?php if ($block->isAutocompleteDisabled()) : ?> autocomplete="off"<?php endif; ?> id="email" type="email" class="input-text" title="<?= $block->escapeHtmlAttr(__('Email')) ?>" data-mage-init='{"mage/trim-input":{}}' data-validate="{required:true, 'validate-email':true}">
+                    </div>
+                </div>
+                <div class="field password required">
+                    <label for="pass" class="label"><span><?= $block->escapeHtml(__('Password')) ?></span></label>
+                    <div class="control">
+                        <input name="login[password]" type="password" <?php if ($block->isAutocompleteDisabled()) : ?> autocomplete="off"<?php endif; ?> class="input-text" id="pass" title="<?= $block->escapeHtmlAttr(__('Password')) ?>" data-validate="{required:true}">
+                    </div>
+                </div>
+                <?= $block->getChildHtml('form_additional_info') ?>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                         <button type="submit" class="tempo-button" name="multiaccount" id="multiaccount"><span><?= $block->escapeHtml(__('Sign In')) ?></span>
+                        </button>
+                        <button type="submit" class="action login primary" style="display: none;" name="send" id="send2"><span><?= $block->escapeHtml(__('Sign In')) ?></span>
+                        </button>
+                    </div>
+                    <div class="secondary"><a class="action remind" href="<?= $block->escapeUrl($block->getForgotPasswordUrl()) ?>"><span><?= $block->escapeHtml(__('Forgot Your Password?')) ?></span></a></div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<div style="display: none;">
+    <div class="multi-account-login">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Company</th>
+                    <th scope="col">Account Number</th>
+                    <th scope="col">User Id</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php
+$extensionHelper = $this->helper('DCKAP\Extension\Helper\Data');
+$defaultCaptcha = $extensionHelper->getDefaultCaptcha();
+$googleCaptcha = $extensionHelper->getGoogleCaptcha();
+?>
+<script>
+    require([
+        'jquery',
+        'Magento_Ui/js/modal/modal',
+        'mage/url',
+        '!domReady'
+    ], function($, modal, urlBuilder) {
+        $(document).ready(function () {
+
+            <?php
+            $params = $this->getRequest()->getParams();
+            if (isset($params['from']) && $params['from'] == 'checkout') { ?>
+                var checkoutMsg = '<div role="alert" class="messages"><div class="message-notice notice message"><div>Login Required for proceed to checkout and complete the purchase.</div></div></div>';
+                $('.column.main').prepend(checkoutMsg);
+            <?php } ?>
+
+            $(document).on('click', '#multiaccount', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('body').trigger('processStart');
+
+                var serviceurl = urlBuilder.build('multiaccount/index/index');
+                var email =  $('#login-form #email').val();
+                var password =  $('#login-form #pass').val();
+                var captcha =  1;
+                <?php if ($defaultCaptcha) { ?>
+                    if ($('#login-form #captcha_user_login').length > 0) {
+                        if ($('#login-form #captcha_user_login').val()) {
+                            captcha = 1;
+                        } else {
+                            captcha = 0;
+                        }
+                    }
+                <?php } ?>
+                <?php if ($googleCaptcha) { ?>
+                    if ($('#login-form input.required-captcha.checkbox').length > 0) {
+                        if ($(document).find('#login-form input.required-captcha.checkbox').is(":checked")) {
+                            captcha = 1;
+                        } else {
+                            captcha = 0;
+                        }
+                    }
+                <?php } ?>
+                if(email == "" || password == "" || !captcha) {
+                    $('#send2').click();
+                    $('body').trigger('processStop');
+                } else {
+                    $.ajax({
+                        url: serviceurl,
+                        type: 'POST',
+                        data: "email=" + encodeURIComponent(email) + "&password=" + encodeURIComponent(password),
+                        dataType: 'JSON',
+                        global: false,
+                        showLoader: true,
+                        success: function (res) {
+                            if(res.data){
+                                $('.multi-account-login tbody').html(res.data);
+                                var multiAccountPopup = {
+                                    type: 'popup',
+                                    responsive: true,
+                                    innerScroll: true,
+                                    buttons: false,
+                                    title: "Select Company Account",
+                                    modalClass: "popup-center",
+                                    clickableOverlay: true,
+                                    heightStyle: "content",
+                                    content: ""
+                                };
+                                modal(multiAccountPopup, $('.multi-account-login'));
+                                $('.multi-account-login').trigger('openModal').on('modalclosed', function () {
+                                    // window.location.href = urlBuilder.build('customer/account/login/');
+                                });
+                            }else{
+                                $("#login-form").submit();
+                            }
+                            $('body').trigger('processStop');
+                        }
+                    });
+                }
+            });
+
+            /* login action from the popup */
+            $(document).on('click', '.log-button', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var html = $(this).parents('form.sales-person-list').find('.etc-val').html();
+                $('#login-form .actions-toolbar').before(html);
+                $("#login-form").submit();
+                $(document).find('.modal-header .action-close').click();
+            });
+        });
+    });
+</script>

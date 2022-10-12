@@ -1,0 +1,107 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Account\AuthorizationLink $block */
+
+$dataPostParam = '';
+if ($block->isLoggedIn()) {
+    $dataPostParam = sprintf(" data-post='%s'", $block->getPostParams());
+}
+$getData = $this->helper('DCKAP\MultiAccount\Helper\Data');
+?>
+<li class="authorization-link">
+    <?php if($block->getLabel()=="Sign In"){?>
+        <a <?= /* @noEscape */ $block->getLinkAttributes() ?><?= /* @noEscape */ $dataPostParam ?>>
+            <?= $block->escapeHtml($block->getLabel()) ?>
+        </a>
+    <?php }
+    if($block->getLabel()=="Sign Out"){ ?>
+
+        <a class="origin-signout" <?= /* @noEscape */ $block->getLinkAttributes() ?><?= /* @noEscape */ $dataPostParam ?>>
+            <?= $block->escapeHtml($block->getLabel()) ?>
+        </a>
+
+        <div class="alert-for-multiaccount" style="display: none;">
+            <a href="#">Sign Out</a>
+        </div>
+    <?php } ?>
+</li>
+<?php if (!$block->isLoggedIn()) { ?>
+    <li>
+        <a href="<?php echo $block->getUrl('customer/account/create'); ?>" title="Signup">
+            <?php echo 'Register'; ?>
+        </a>
+    </li>
+<?php } ?>
+<script>
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal',
+            'Magento_Ui/js/modal/confirm'
+        ],
+        function(
+            $,
+            modal,
+            confirmation
+        ) {
+            $(document).on("click", ".alert-for-multiaccount", function() {
+                if($('.minicart-items li').length>0){
+                    confirmation({
+                        content: '<?php echo __('Note: The items from your cart will be lost if you log out. You can save these items to your shopping list for later use. Click “Cancel” to continue shopping or to add your items to the shopping list. Click “Continue” to log out.');?>',
+                        buttons: [{
+                            text: 'Cancel',
+                            class: 'action-secondary action-dismiss',
+                            click: function (event) {
+                                this.closeModal(event);
+                            }
+                        }, {
+                            text: 'Continue',
+                            class: 'action-primary action-accept',
+                            click: function (event) {
+                                this.closeModal(event, true);
+                            }
+                        }],
+                        actions: {
+                            confirm: function(){
+                                $('.origin-signout').click();
+                            }
+                        }
+                    });
+                }
+                else{
+                    $('.origin-signout').click();
+                    e.preventDefault();
+                }
+                e.preventDefault();
+            });
+
+            //$(document).ready(function () {
+            //
+            //    var serviceUrl = "<?php //echo $block->getUrl('multiaccount/index/company'); ?>//";
+            //    console.log(serviceUrl);
+            //    $.ajax({
+            //        url: serviceUrl,
+            //        type: 'GET',
+            //        dataType: 'json',
+            //        data: "",
+            //        success: function (response) {
+            //            console.log(response);
+            //            if (response.status === "SUCCESS") {
+            //                var multiuser =response.multi_user;
+            //                if(multiuser ==2){
+            //                    $(".origin-signout").css("display","none");
+            //                    $(".alert-for-multiaccount").css("display","block");
+            //                }
+            //            }
+            //
+            //        }
+            //    });
+            //
+            //});
+        }
+    );
+</script>

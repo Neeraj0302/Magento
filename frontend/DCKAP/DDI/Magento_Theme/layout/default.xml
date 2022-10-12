@@ -1,0 +1,36 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="header.panel">
+            <block class="Magento\Framework\View\Element\Template" name="custom-assistance" template="Magento_Theme::html/custom-text.phtml" before="top.links" />
+              <block class="Magento\Framework\View\Element\Template" name="multi-accout-company" template="Magento_Theme::html/multiaccount_company.phtml" before="custom-assistance" />
+        </referenceContainer>
+        <referenceContainer name="header-wrapper">
+            <block class="Magento\Framework\View\Element\Template" name="custom-text" template="Magento_Theme::html/custom-assistance.phtml" after="logo" />
+        </referenceContainer>
+        <referenceBlock name="register-link" remove="true" />
+    </body>
+    <referenceBlock name="head.additional">
+        <block class="DCKAP\Theme\Block\Template" name="custom-head-components" template="Magento_Theme::html/head.phtml"/>
+    </referenceBlock>
+    <referenceContainer name="before.body.end">
+        <block class="DCKAP\Catalog\Block\Price" name="custom_before_body_end" template="Magento_Theme::html/before-body-end.phtml" />
+    </referenceContainer>
+    <referenceBlock name="catalog.compare.link" remove="true"/>
+    <referenceBlock name="footer_links" remove="true"/>
+     <!--<referenceContainer name="footer">
+            <block class="Magento\Cms\Block\Block" name="custom-links">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">Footer-content-v1</argument>
+                </arguments>
+            </block>
+     </referenceContainer>-->
+    <referenceContainer name="footer">
+        <block name="custom.footer" template="DCKAP_Theme::dckap/footer.phtml" />
+    </referenceContainer>
+     <referenceBlock name="form.subscribe" remove="true" />
+        <referenceContainer name="customer.wishlist.buttons">
+            <referenceBlock name="customer.wishlist.button.share" remove="true"/>
+          <!--  <action method="unsetChild"><name>customer.wishlist.button.share</name></action>
+          -->
+        </referenceContainer>
+</page>

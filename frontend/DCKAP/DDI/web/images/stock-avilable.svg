@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+    <title>Mask</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M12,7 C12,10.3137177 9.31371774,13 6,13 C2.68628226,13 0,10.3137177 0,7 C0,3.68628226 2.68628226,1 6,1 C9.31371774,1 12,3.68628226 12,7 Z M5.28285,10.8821789 L9.88285,6.25570439 C10.03905,6.0986054 10.03905,5.84387272 9.88285,5.68677374 L9.317175,5.11784309 C9.160975,4.96071897 8.9077,4.96071897 8.751475,5.11784309 L5,8.89088393 L3.248525,7.12932861 C3.092325,6.97222963 2.83905,6.97222963 2.682825,7.12932861 L2.11715,7.69825926 C1.96095,7.85535824 1.96095,8.11009092 2.11715,8.2671899 L4.71715,10.8821538 C4.873375,11.0392779 5.126625,11.0392779 5.28285,10.8821789 L5.28285,10.8821789 Z" id="path-1"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="UI/Badge/In-Stock" transform="translate(0.000000, -1.000000)">
+            <g id="In-Stock">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" fill="#569512" fill-rule="nonzero" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>

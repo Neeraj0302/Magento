@@ -1,0 +1,11 @@
+<?php
+$order = $this->getData('order');
+$payment = $order->getPayment();
+$paymentMethod = $payment->getMethod();
+$info = $payment->getAdditionalInformation();
+if ($paymentMethod == 'checkmo') {
+    echo 'Nil';
+} else {
+    echo $info['method_title'];
+}
+?>

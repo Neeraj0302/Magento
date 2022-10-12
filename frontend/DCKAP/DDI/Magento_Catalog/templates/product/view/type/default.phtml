@@ -1,0 +1,47 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/* @var $block \Magento\Catalog\Block\Product\View\AbstractView */
+
+$_product = $block->getProduct();
+$stock = 0;
+$offline = 0;
+if ($offline = $_product->getCustomAttribute('offline')) {
+    $offline = $_product->getData('offline');
+}
+if (!$offline || $offline == "0"):
+    if ($_product->getTypeId() == 'simple') {
+        $extensionHelper = $this->helper('DCKAP\Extension\Helper\Data');
+        $stockConfig = (int)$extensionHelper->getViewInventoryByLocation();
+        $guestStockConfig = $extensionHelper->getGuestStockDisplay();
+        $sessionProductData = $this->helper('DCKAP\Catalog\Helper\Data')->getSessionProductData($_product->getSku());
+        if (isset($sessionProductData['lineItem'])) {
+            $stock = (int)$sessionProductData['lineItem']['totalAvailable'];
+        }
+        if (($guestStockConfig != 0) && ($stockConfig > 0)) {
+            if ($stock > 0): ?>
+                <div class="stock available" title="<?= /* @escapeNotVerified */ __('Availability') ?>">
+                    <span><?= /* @escapeNotVerified */ __('Available In stock') ?></span>
+                </div>
+            <?php else: ?>
+                <div class="stock unavailable" title="<?= /* @escapeNotVerified */ __('Availability') ?>">
+                    <span><?= /* @escapeNotVerified */ __('Out of Stock') ?></span>
+                </div>
+            <?php endif;
+            if ($stockConfig > 1) {?>
+                <div class="availability only" title="<?php echo 'Only ' . $stock . ' left'; ?>">
+                    <?php echo 'Only <strong>' . $stock . '</strong> left'; ?>
+                </div>
+        <?php }
+        }
+    } else {
+        /* it works if the product is not simple product */
+        ?>
+        <div class="stock unavailable" title="<?= /* @escapeNotVerified */ __('Availability') ?>" style="display: none;">
+            <span><?= /* @escapeNotVerified */ __('Out of Stock') ?></span>
+        </div>
+    <?php }
+endif; ?>

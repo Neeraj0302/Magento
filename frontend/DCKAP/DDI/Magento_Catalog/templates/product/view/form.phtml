@@ -1,0 +1,82 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * Product view template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View
+ */
+?>
+<?php $_helper = $this->helper('Magento\Catalog\Helper\Output'); ?>
+<?php $_product = $block->getProduct(); ?>
+
+<div class="product-add-form product-options-bottom">
+    <form data-product-sku="<?= $block->escapeHtml($_product->getSku()) ?>"
+          action="<?= /* @NoEscape */ $block->getSubmitUrl($_product) ?>" method="post"
+          id="product_addtocart_form"<?php if ($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+        <input type="hidden" name="product" value="<?= /* @escapeNotVerified */ $_product->getId() ?>" />
+        <input type="hidden" name="selected_configurable_option" value="" />
+        <input type="hidden" name="related_product" id="related-products-field" value="" />
+	    <?php
+            $erp_qty =0;
+		    $dckapCatalogHelper = $this->helper('DCKAP\Catalog\Helper\Data');
+		    $erpProductData = $dckapCatalogHelper->getSessionProductData($_product->getSku());
+		    if (isset($erpProductData['lineItem']['totalAvailable'] )) {
+			    $erp_qty = $erpProductData['lineItem']['totalAvailable'] ;
+		    }
+		    $extensionHelper = $this->helper('DCKAP\Extension\Helper\Data');
+		    $allowonaccount = $extensionHelper->getValidateUserData();
+		    $isOutofstockRestrictionenabled =$dckapCatalogHelper->getisOutofstock();
+
+		    ?>
+        <input type="hidden" name="erp_qty" class="erp_qty" value="<?php echo $erp_qty; ?>"/>
+        <input type="hidden" name="product_sku" class="product_id" value=""/>
+        <input type="hidden" name="allowonaccount" class="allowonaccount" value="<?php echo $allowonaccount; ?>"/>
+        <input type="hidden" name="isOutofstockRestrictionenabled" class="isOutofstockRestrictionenabled" value="<?php echo $isOutofstockRestrictionenabled; ?>"/>
+
+        <span class="erp_out_of_stock_check_<?= $_product->getId(); ?>" style="display: none;color:red;"><strong>The requested quantity is not available.
+</strong></span>
+        <input type="hidden" name="item"  value="<?= /* @noEscape */ $block->escapeHtml($block->getRequest()->getParam('id')); ?>" />
+        <?= $block->getBlockHtml('formkey') ?>
+        <?= $block->getChildHtml('form_top') ?>
+        <?php if (!$block->hasOptions()):?>
+            <?= $block->getChildHtml('product_info_form_content') ?>
+        <?php else:?>
+            <?php if ($_product->isSaleable() && $block->getOptionsContainer() == 'container1'):?>
+                <?= $block->getChildChildHtml('options_container') ?>
+            <?php endif;?>
+        <?php endif; ?>
+
+        <?php if ($_product->isSaleable() && $block->hasOptions() && $block->getOptionsContainer() == 'container2'):?>
+            <?= $block->getChildChildHtml('options_container') ?>
+        <?php endif;?>
+        <?= $block->getChildHtml('form_bottom') ?>
+    </form>
+     <?php
+        echo $this->getLayout()
+            ->createBlock('Magento\Catalog\Block\Product\View')
+            ->setTemplate('DCKAP_Shoppinglist::catalog/product/view/addto.phtml')
+            ->toHtml();
+    ?>
+</div>
+<script type="text/javascript">
+ require([
+    'jquery',
+    'priceBox'
+], function($){
+    var dataPriceBoxSelector = '[data-role=priceBox]',
+        dataProductIdSelector = '[data-product-id=<?= $block->escapeHtml($_product->getId()) ?>]',
+        priceBoxes = $(dataPriceBoxSelector + dataProductIdSelector);
+
+    priceBoxes = priceBoxes.filter(function(index, elem){
+        return !$(elem).find('.price-from').length;
+    });
+
+    priceBoxes.priceBox({'priceConfig': <?= /* @escapeNotVerified */ $block->getJsonConfig() ?>});
+});
+    </script>

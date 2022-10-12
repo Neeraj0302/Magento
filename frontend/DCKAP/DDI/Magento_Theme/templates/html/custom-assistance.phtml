@@ -1,0 +1,16 @@
+<?php $dckapHelper = $this->helper('DCKAP\Extension\Helper\Data');
+$callUs = $dckapHelper->getCallUs();
+$callUsText = $dckapHelper->getCallUsText();
+?>
+<div class="custom-assistance">
+    <span class="callus"><?php if ($callUs && $callUs != '') {
+                echo $callUs;
+            } else {
+                echo '(916) 447-7022';
+            } ?></span>
+    <span class="callus-text"><?php if ($callUsText && $callUsText != '') {
+        echo $callUsText;
+    } else {
+        echo 'NEED ASSISTANCE? CALL US TODAY!';
+        } ?></span>
+</div>

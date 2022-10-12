@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php /** @var $block \Magento\Checkout\Block\Onepage\Success */ ?>
+<?php $dckapCheckoutHelper = $this->helper('DCKAP\Checkout\Helper\Data');
+$order = $dckapCheckoutHelper->getOrder($block->getOrderId());
+if ($order->getStatus() != 'pending_approval') {
+$orderPrintUrl = $block->getUrl('quickrfq/order/printview/'); ?>
+<?php if ($block->getCanViewOrder() && $block->getCanPrintOrder()) :
+    $orderPrintUrl .= 'id/'.$order->getDdiOrderId();
+    ?>
+    <a href="<?= /* @escapeNotVerified */ $orderPrintUrl ?>" target="_blank" rel="noopener noreferrer" class="print">
+        <?= /* @escapeNotVerified */ __('Print receipt') ?>
+    </a>
+    <?= $block->getChildHtml() ?>
+<?php endif;?>
+<?php } ?>

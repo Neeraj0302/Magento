@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name='breadcrumbs' template='Magento_Theme::html/breadcrumbs.phtml' />
+        <block class='Magento\Catalog\Block\Breadcrumbs'/>
+        <referenceContainer name="content">
+            <container name="product.info.whole" htmlTag="div" htmlClass="product-info-whole" before="-" />
+            <referenceContainer name="product.info.main">
+                <container name="product.info.top" htmlTag="div" htmlClass="product-info-top" before="-" />
+                <container name="product.info.mid" htmlTag="div" htmlClass="product-info-mid" after="product.info.top">
+                    <container name="product.info.mid.left" htmlTag="div" htmlClass="product-info-mid-left" />
+                    <container name="product.info.mid.right" htmlTag="div" htmlClass="product-info-mid-right" />
+                </container>
+            </referenceContainer>
+            <container name="product.detail.mid" htmlTag="div" htmlClass="product-detail-mid" after="product.info.whole">
+                <container name="product.detail.mid.container" htmlTag="div" htmlClass="product-detail-mid-container" />
+            </container>
+            <referenceContainer name="content.aside">
+                <container name="custom.product.review" htmlTag="div" htmlClass="custom-product-review" after="product.info.upsell" />
+            </referenceContainer>
+        </referenceContainer>
+        <move element="product.info.main" destination="product.info.whole" before="-"/>
+        <move element="product.info.media" destination="product.info.whole" before="-"/>
+
+        <move element="product.price.tier" destination="product.info.mid.left" before="-"/>
+        <move element="product.info.price" destination="product.info.mid.left" before="-"/>
+        <move element="product.info.review" destination="product.info.top" after="product.info.price"/>
+        <!--<move element="product.info.options.wrapper" destination="product.info.options.wrapper.bottom" after="product.info.addtocart.additional"/>-->
+        <!--<move element="product.info.options.wrapper" destination="addtocart.shortcut.buttons.additional" before="-" />-->
+       
+        <move element="product.info.stock.sku" destination="product.info.top" before="-"/>
+
+        <move element="custom.upc" destination="product.info.top" before="product.info.review" />
+        <move element="product.info" destination="product.info.mid.left" after="product.info.price" />
+        <move element="product.info.type" destination="product.info.mid.right" after="product.info"/>
+        <move element="custom.product.info.warehouse" destination="product.info.mid.right" after="product.info.type"/>
+        <move element="page.main.title" destination="columns.top" after="-"/>
+        <move element="reviews.tab" destination="custom.product.review" />
+        <move element="product.info.details" destination="product.detail.mid.container" before="-" />
+        <move element="pdp.custom.block" destination="product.detail.mid.container" after="product.info.details" />
+        <move element="custom_tier_price" destination="product.info.mid.left" after="product.info.price" />
+        <referenceBlock name="view.addto.compare" remove="true"/>
+        <referenceBlock name="view.addto.wishlist" remove="true" />
+        <!--<referenceBlock name="product.info.mailto" remove="true" />-->
+        <move element="product.info.social" destination="pdp.email.print" after="pdp.print" />
+        <!--<referenceBlock name="product.info.social" remove="true" />-->
+        <move element="messages" destination="page.messages" before='-' />
+    </body>
+</page>

@@ -1,0 +1,15 @@
+<?php
+$order = $this->getData('order');
+$themeHelper = $this->helper(\DCKAP\Theme\Helper\Data::class);
+$customCheckoutField = $themeHelper->unserialize($order->getBssCustomfield());
+if (isset($customCheckoutField['purchase_order_number'])) {
+    echo '<tr><td class="method-info"><h3>PO Number</h3>';
+    if (isset($customCheckoutField['purchase_order_number']['value'])) {
+        print_r($customCheckoutField['purchase_order_number']['value']);
+    }
+// else {
+//        print_r($customCheckoutField['purchase_order_number']);
+//    }
+    echo '</td></tr>';
+}
+?>

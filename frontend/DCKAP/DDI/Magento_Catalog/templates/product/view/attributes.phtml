@@ -1,0 +1,64 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * Product additional attributes template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\Attributes
+ */
+?>
+<?php
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+$_product = $block->getProduct();
+if ($_additional = $block->getAdditionalData()):
+    $customHelper = $this->helper('DCKAP\Catalog\Helper\View');
+    $groups = $customHelper->getAttributeGroups($_product->getAttributeSetId());
+    $displayAttrs = array();
+    if ($groups && count($groups)) {
+        if (isset($groups['productfilters'])) {
+            $group = $groups['productfilters'];
+            $attrs = $customHelper->getGroupAttributes($_product, $group['attribute_group_id'], $_product->getAttributes());
+            foreach ($attrs as $_data) {
+                $displayAttrs[$_data->getFrontendLabel()] = $_data->getFrontend()->getValue($_product);
+            }
+        }
+        if (isset($groups['moreinformation'])) {
+            $group = $groups['moreinformation'];
+            $attrs = $customHelper->getGroupAttributes($_product, $group['attribute_group_id'], $_product->getAttributes());
+            foreach ($attrs as $_data) {
+                $displayAttrs[$_data->getFrontendLabel()] = $_data->getFrontend()->getValue($_product);
+            }
+        }
+        if (count($displayAttrs)) {
+            ksort($displayAttrs);
+        }
+    } ?>
+    <div class="additional-attributes-wrapper table-wrapper">
+        <?php if (count($displayAttrs)) { ?>
+            <table class="data table additional-attributes info-table" id="product-attribute-specs-table">
+                <caption class="table-caption"><?= __('Specifications') ?></caption>
+                <tbody>
+                <?php foreach ($displayAttrs as $attrKey => $attrVal) {
+                    if ($attrVal != '') {
+                        ?>
+                        <tr>
+                            <th class="col label" scope="row"><?php echo $attrKey; ?></th>
+                            <td class="col data" data-th="<?php echo $attrKey; ?>"><?php echo $attrVal; ?></td>
+                        </tr>
+                    <?php } ?>
+                <?php } ?>
+
+                </tbody>
+            </table>
+        <?php } else { ?>
+            <p>No information available</p>
+        <?php } ?>
+    </div>
+<?php else: ?>
+    <p>No information available</p>
+<?php endif; ?>

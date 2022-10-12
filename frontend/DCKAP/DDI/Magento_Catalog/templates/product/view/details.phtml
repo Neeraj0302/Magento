@@ -1,0 +1,61 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+$extensionHelper = $this->helper('DCKAP\Extension\Helper\Data');
+$tabClass = '';
+// check if tab view enabled
+if($extensionHelper->getTabView() == 1){
+    $tabClass = 'tab-content';
+}
+/** @var \Magento\Catalog\Block\Product\View\Details $block */
+?>
+<?php if ($detailedInfoGroup = $block->getGroupSortedChildNames('detailed_info', 'getChildHtml')) :?>
+    <div class="product info detailed <?= $tabClass ?>">
+        <?php $layout = $block->getLayout(); ?>
+        <div class="product data items"
+            <?php if($tabClass != ''){ ?>
+                data-mage-init='
+                        {
+                            "accordion":
+                            {
+                                "openedState": "active",
+                                "active": [0],
+                                "multipleCollapsible": false
+                            }
+                        }'
+            <?php } else { ?>
+                data-mage-init='
+                        {
+                            "accordion":
+                            {
+                                "openedState": "active",
+                                "collapsible": false,
+                                "active": [0,1,2],
+                                "multipleCollapsible": true
+                            }
+                        }'
+            <?php } ?>
+        >
+            <?php foreach ($detailedInfoGroup as $name) :?>
+                <?php
+                $html = $layout->renderElement($name);
+                if (!trim($html)) {
+                    continue;
+                }
+                $alias = $layout->getElementAlias($name);
+                $label = $block->getChildData($alias, 'title');
+                ?>
+                <div class="data item title"
+                     data-role="collapsible" id="tab-label-<?= $block->escapeHtmlAttr($alias) ?>">
+                    <h2 class="data switch"><?= $label ?></h2>
+                </div>
+                <div class="data item content"
+                     aria-labelledby="tab-label-<?= $block->escapeHtmlAttr($alias) ?>-title" id="<?= $block->escapeHtmlAttr($alias) ?>" data-role="content" style="display:block">
+                    <?= /* @noEscape */ html_entity_decode($html) ?>
+                </div>
+            <?php endforeach;?>
+        </div>
+    </div>
+<?php endif; ?>

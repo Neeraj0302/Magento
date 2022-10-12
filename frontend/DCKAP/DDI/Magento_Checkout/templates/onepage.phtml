@@ -1,0 +1,308 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+?>
+<?php
+$wareHouseHelper = $this->helper('DCKAP\ShippingAdditionalFields\Helper\Data');
+$extensionHelper = $this->helper('DCKAP\Extension\Helper\Data');
+	//Pickup shipping method
+	$getCustomerData = $extensionHelper->getEcommUserData();
+	$wareHouseData = $wareHouseHelper->getWarehouse();
+	$warehouseList = $wareHouseHelper->getWarehouseDetail();
+	if ($warehouseList && !empty($warehouseList->getData())) {
+		$selected_branch="";
+		$branch_Id="";
+		$branch_Id = isset($getCustomerData['branch']) ? $getCustomerData['branch'] :'';
+		foreach ($warehouseList->getData() as $warehouse) {
+			if ($branch_Id == $warehouse['store_description']) {
+				$selected_branch = $warehouse['store_name'];
+			}
+		}
+
+	}
+
+$wareHouseData = $wareHouseHelper->getWarehouse();
+$disabledDates = $extensionHelper->getdisableDates();
+$enableSaturday = $extensionHelper->getenableSaurday();
+$enableSunday = $extensionHelper->getenableSunday();
+if($disabledDates ==""){
+    $disabledDates = 0;
+}
+$getDeliveryDate = $extensionHelper->getDeliverydateshow();
+
+?>
+
+<div id="checkout" data-bind="scope:'checkout'" class="checkout-container">
+    <div id="checkout-loader" data-role="checkout-loader" class="loading-mask" data-mage-init='{"checkoutLoader": {}}'>
+        <div class="loader">
+            <img src="<?= /* @escapeNotVerified */
+            $block->getViewFileUrl('images/loader-1.gif') ?>"
+                 alt="<?= /* @escapeNotVerified */
+                 __('Loading...') ?>"
+                 style="position: absolute;">
+        </div>
+    </div>
+ 
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+        {
+            "#checkout": {
+                "Magento_Ui/js/core/app": <?= /* @escapeNotVerified */
+        $block->getJsLayout() ?>
+            }
+        }
+
+    </script>
+    <script type="text/javascript">
+        window.checkoutConfig = <?= /* @escapeNotVerified */ $block->getSerializedCheckoutConfig() ?>;
+        // Create aliases for customer.js model from customer module
+        window.isCustomerLoggedIn = window.checkoutConfig.isCustomerLoggedIn;
+        window.customerData = window.checkoutConfig.customerData;
+
+        require([
+            'mage/url',
+            'Magento_Ui/js/block-loader'
+        ], function (url, blockLoader) {
+            blockLoader("<?= /* @escapeNotVerified */ $block->getViewFileUrl('images/loader-1.gif') ?>");
+            return url.setBaseUrl('<?= /* @escapeNotVerified */ $block->getBaseUrl() ?>');
+        });
+
+        require(['jquery', "mage/calendar", "mage/url"], function ($, calendar, urlBuilder) {
+            $(document).ready(function () {
+                $('.logo').attr("href", "#")
+                setTimeout(function(){checkRadios(); }, 3000);
+
+                //wait until the last element (.payment-method) being rendered
+                var existCondition = setInterval(function() {
+                    if ($('.payment-method').length) {
+                        clearInterval(existCondition);
+                        checkRadios();
+
+                    }
+
+                }, 3000);
+
+// check page loaded with shipping methods
+                var existConditionShipping = setInterval(function() {
+                    if ($('.table-checkout-shipping-method input[type="radio"]').val()) {
+                        clearInterval(existConditionShipping);
+                        $('.logo').attr("href", BASE_URL);
+                    }
+                }, 3000);
+
+                var wareHouseArray = <?php echo json_encode($wareHouseData); ?>;
+                var selectedWareHouse = '';
+                var wareHouseUpdate = setInterval(appendOption, 1000);
+                // appendOption();
+                function appendOption() {
+                    if ($('#warehouselist').length) {
+
+                        clearInterval(wareHouseUpdate);
+                        var wareHouseArray = <?php echo json_encode($wareHouseData); ?>;
+                        $('body .table-checkout-shipping-method input[type="radio"]').trigger("change");
+
+                        setTimeout(function () {
+                            selectedWareHouse = $('body #warehouselist').val();
+                            $('body #warehouselist').empty();
+                            for (let i = 0; i < wareHouseArray.length; ++i) {
+
+                                if (selectedWareHouse == wareHouseArray[i].store_name) {
+                                    $('body #warehouselist').append("<option value='" + wareHouseArray[i].store_name + "' selected='selected'>" + wareHouseArray[i].store_name + "</option>");
+                                } else {
+                                    $('body #warehouselist').append("<option value='" + wareHouseArray[i].store_name + "'>" + wareHouseArray[i].store_name + "</option>");
+                                }
+
+                            }
+
+                            // var disableddates = parseInt("<?php //echo $disabledDates; ?>");
+                            // console.log(disableddates+"disableDate");
+                            // var unavailableDates = [];
+                            // if(disableddates != 0 && disableddates !=''){
+                            //     Date.prototype.addDays = function(days) {
+                            //         var dat = new Date(this.valueOf())
+                            //         dat.setDate(dat.getDate() + days);
+                            //         return dat;
+                            //     }
+
+                            //     function getDates(startDate, stopDate) {
+                            //         var dateArray = new Array();
+                            //         var currentDate = startDate;
+                            //         while (currentDate <= stopDate) {
+                            //             dateArray.push(currentDate)
+                            //             currentDate = currentDate.addDays(1);
+                            //         }
+                            //         return dateArray;
+                            //     }
+
+                            //     var dateArray = getDates(new Date(), (new Date()).addDays(disableddates));
+                            //     for (i = 0; i < dateArray.length; i ++ ) {
+                            //         var date = convert(dateArray[i]);
+                            //         unavailableDates.push(date)
+
+                            //     }
+
+                            //     function convert(str) {
+                            //         var date = new Date(str),
+                            //             mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+                            //             day = ("0" + date.getDate()).slice(-2);
+                            //         return [day, mnth, date.getFullYear()].join("-");
+                            //     }
+
+
+                            // }
+                            // function unavailable(date)
+                            // {
+                            //     var string = $.datepicker.formatDate('dd-mm-yy',date);
+                            //     return [unavailableDates.indexOf(string) == -1];
+                            // }
+                            var startedDate = new Date(),
+                                noOfDaysToAdd =<?php echo $disabledDates; ?>,
+                                count = 1;
+                                <?php if($enableSaturday==1 && $enableSunday==0) { ?>
+                                    while(count <= noOfDaysToAdd){
+                                        startedDate.setDate(startedDate.getDate() + 1);
+                                        if(startedDate.getDay() != 0){
+                                            count++;
+                                        }
+                                    }
+                                <?php } ?>
+                                <?php if($enableSaturday==0 && $enableSunday==1) { ?>
+                                    while(count <= noOfDaysToAdd){
+                                        startedDate.setDate(startedDate.getDate() + 1);
+                                        if(startedDate.getDay() != 6){
+                                            count++;
+                                        }
+                                    }
+                                <?php } ?>
+                                <?php if($enableSaturday==0 && $enableSunday==0) { ?>
+                                    while(count <= noOfDaysToAdd){
+                                        startedDate.setDate(startedDate.getDate() + 1);
+                                        if(startedDate.getDay() != 0 && startedDate.getDay() != 6){
+                                            count++;
+                                        }
+                                    }
+                                <?php } ?>
+                                <?php if($enableSaturday==1 && $enableSunday==1) { ?>
+                                    while(count <= noOfDaysToAdd){
+                                        startedDate.setDate(startedDate.getDate() + 1);
+                                        count++;                                         
+                                    }
+                                <?php } ?>
+                            function unavailable(date)
+                            {
+                                var string = $.datepicker.formatDate('dd-mm-yy',date);
+                                var weekends = [0,6];
+                                if(unavailableDates.indexOf(string) != -1) {
+                                	return [unavailableDates.indexOf(string) == -1];
+                                }
+								return [$.inArray(date.getDay(), weekends) == -1];
+                            }
+
+                            $("#ddi_pickup_date").calendar({
+                                showsTime: false,
+                                hideIfNoPrevNext: true,
+                                <?php if($enableSaturday==1 && $enableSunday==0) { ?>
+                                    minDate:startedDate,
+                                beforeShowDay: function(d) {
+                                   return [!(d.getDay()==0)]
+                                },
+                            <?php } ?>
+                            <?php if($enableSaturday==0 && $enableSunday==1) { ?>
+
+                                minDate:startedDate,
+                                beforeShowDay: function(d) {
+                                   return [!(d.getDay()==6)]
+                                },
+                            <?php } ?>
+                            <?php if($enableSunday==1 && $enableSaturday==1) { ?>
+                                minDate:startedDate,
+                                //beforeShowDay: unavailable,
+                                beforeShowDay: function(d) {
+                                   return [!(d.getDay()==8)]
+                                },
+                            <?php } ?>
+                             <?php if($enableSunday==0 && $enableSaturday==0) { ?>                             
+                                minDate:startedDate,
+                                beforeShowDay: $.datepicker.noWeekends,
+                            <?php } ?>
+                                buttonText: "<?php echo __('Select Date') ?>"
+                            });
+                            $('body').trigger('processStop');
+                        }, 1000);
+                    }
+                }
+
+                <?php if ($getDeliveryDate == '0') { ?>
+                var expectedDateConfigUpdate = setInterval(expectedDateConfig, 1000);
+                function expectedDateConfig() {
+                    if ($('.checkout-shipping-method li#custom-field div[name="shippingAddressLogin.bss_custom_field[expected_delivery_date]"]').length) {
+                        clearInterval(expectedDateConfigUpdate);
+                        $('.checkout-shipping-method li#custom-field div[name="shippingAddressLogin.bss_custom_field[expected_delivery_date]"]').hide().find('input[name="bss_custom_field[expected_delivery_date]"]').attr('disabled', true);
+                    }
+                }
+                <?php } ?>
+
+                $(document).on('change', 'body .table-checkout-shipping-method input[type="radio"]', function (e) {
+                    selectedWareHouse = $('body #warehouselist').val();
+                    $('body #warehouselist').empty();
+                    for (let i = 0; i < wareHouseArray.length; ++i) {
+                        if (selectedWareHouse == wareHouseArray[i].store_name) {
+                            $('body #warehouselist').append("<option value='" + wareHouseArray[i].store_name + "' selected='selected'>" + wareHouseArray[i].store_name + "</option>");
+                        } else {
+                            $('body #warehouselist').append("<option value='" + wareHouseArray[i].store_name + "'>" + wareHouseArray[i].store_name + "</option>");
+                        }
+
+                    }
+                    // wareHouseUpdate = setInterval(appendOption, 1000);
+                    // appendOption();
+                });
+                $(document).on('change', 'body .payment-method-title input[type="radio"]', function (e) {
+                    checkRadios();
+                });
+                function checkRadios() {
+                    if ($("#cashondelivery").is(":checked")) {
+                        $('.checkout-billing-address').hide();
+                    } else {
+                        $('.checkout-billing-address').show();
+                    }
+                }
+            });
+
+            $(window).load(function () {
+                var currentUrl = window.location.href;
+                var checkout2 = urlBuilder.build('checkout/')+'#confirmation-step';
+                var checkout3 = urlBuilder.build('checkout/')+'#payment';
+                var quote2 = urlBuilder.build('checkout')+'?type=quote#confirmation-step';
+                var quote3 = urlBuilder.build('checkout/')+'?type=quote#confirmation-step';
+
+                if (currentUrl === checkout2 || currentUrl === checkout3) {
+                    window.location.href = "<?php echo $block->getUrl('checkout'); ?>";
+                } else if (currentUrl === quote2 || currentUrl === quote3) {
+                    window.location.href = "<?php echo $block->getUrl('checkout'); ?>?type=quote";
+                }
+            });
+            $(document).ready(function () {
+                var branch_id = "<?php echo $selected_branch; ?>";
+                var wareHouseUpdatebranch="";
+                if(branch_id !=""){
+                    $('#warehouselist option[value=" '+ branch_id+'"]').prop("selected", true);
+                    wareHouseUpdatebranch = setInterval(wareHouseUpdatebranch, 1000);
+                    function wareHouseUpdatebranch() {
+                        var selected_dropdown_value = $('#warehouselist').val();
+                        $('#warehouselist').val(branch_id).change();
+                        if(selected_dropdown_value == branch_id){
+                            clearInterval(wareHouseUpdatebranch);
+                        }
+                    }
+                }
+
+            });
+        });
+
+    </script>
+</div>
+

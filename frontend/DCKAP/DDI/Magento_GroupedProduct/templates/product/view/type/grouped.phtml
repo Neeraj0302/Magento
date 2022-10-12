@@ -1,0 +1,163 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * Grouped product data template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\BaseImage
+ * @var $block \Magento\GroupedProduct\Block\Product\View\Type\Grouped
+ */
+?>
+<?php $block->setPreconfiguredValue(); ?>
+<?php $_product = $block->getProduct(); ?>
+<?php $_associatedProducts = $block->getAssociatedProducts(); ?>
+<?php $_hasAssociatedProducts = count($_associatedProducts) > 0; ?>
+<?php
+$extensionHelper = $this->helper('DCKAP\Extension\Helper\Data');
+	$dckapCatalogHelper = $this->helper('DCKAP\Catalog\Helper\Data');
+$stockCheck = $extensionHelper->getViewInventoryByLocation();
+$guestStockConfig = $extensionHelper->getGuestStockDisplay();
+$qtyLabel = ($stockCheck && !$_product->isSaleable()) ? 'Availability' : 'Qty';
+	$allowonaccount = $extensionHelper->getValidateUserData();
+	$isOutofstockRestrictionenabled =$dckapCatalogHelper->getisOutofstock();
+?>
+<div class="table-wrapper grouped">
+    <table class="table data grouped"
+           id="super-product-table"
+           data-mage-init='{ "Magento_GroupedProduct/js/product-ids-resolver": {} }'>
+        <caption class="table-caption"><?= $block->escapeHtml(__('Grouped product items')) ?></caption>
+        <thead>
+        <tr>
+            <th class="col item" scope="col"><?= $block->escapeHtml(__('Image')) ?></th>
+            <th class="col item" scope="col"><?= $block->escapeHtml(__('Product Name')) ?></th>
+            <th class="col item" scope="col"><?= $block->escapeHtml(__('Sku')) ?></th>
+            <?php if (($stockCheck!=0 && $guestStockConfig!=0) || $_product->isSaleable()) : ?>
+                <th class="col qty" scope="col"><?= $block->escapeHtml(__($qtyLabel)) ?></th>
+            <?php endif; ?>
+            <?php if ($_product->isSaleable()) : ?>
+                <th class="col uom" scope="col"><?= $block->escapeHtml(__('UOM')) ?></th>
+            <?php endif; ?>
+        </tr>
+        </thead>
+
+        <?php if ($_hasAssociatedProducts) : ?>
+            <tbody>
+            <?php foreach ($_associatedProducts as $_item) : ?>
+                <tr>
+                    <td data-th="<?= $block->escapeHtml(__('Image')) ?>">
+                        <?php $imgUrl = $extensionHelper->getItemImage($_item->getId()); ?>
+                        <img src="<?= $imgUrl; ?>" alt="product-image" width="120" height="120"/>
+                        <input type="hidden"   class="subproduct-id" data-product-id="<?= $block->escapeHtmlAttr($_item->getId()) ?>" value="" />
+                <input type="hidden" name="subproduct_id"  value="<?= $block->escapeHtmlAttr($_item->getId()) ?>" />
+                        <input type="hidden" name="sub_erp_qty_<?= $block->escapeHtmlAttr($_item->getId()) ?>" class="sub_erp_qty_<?= $block->escapeHtmlAttr($_item->getId()) ?>"  value="" />
+                        <input type="hidden" name="allowonaccount" class="allowonaccount" value="<?php echo $allowonaccount; ?>"/>
+                        <input type="hidden" name="isOutofstockRestrictionenabled" class="isOutofstockRestrictionenabled" value="<?php echo $isOutofstockRestrictionenabled; ?>"/>
+
+                    </td>
+                    <td data-th="<?= $block->escapeHtml(__('Product Name')) ?>" class="col item">
+                        <strong class="product-item-name">
+                            <a class="product-item-link" target="_blank" rel="noopener noreferrer" title="<?= $block->escapeHtml($_item->getName()) ?>" href="<?= $_item->getProductUrl() ?>" >
+                                <?= $block->escapeHtml($_item->getName()) ?>
+                            </a>
+                        </strong>
+                        <?php if ($block->getCanShowProductPrice($_product)) : ?>
+                            <?php if ($block->getCanShowProductPrice($_item)) : ?>
+                                <div class="grouped-associated-price" style="display: none;">
+                                    <?= /* @noEscape */ $block->getProductPrice($_item) ?>
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <input type="hidden"  class="subproduct-id" data-product-id="<?= $block->escapeHtmlAttr($_item->getId()) ?>" value="" />
+                    </td>
+
+                    <td data-th="<?= $block->escapeHtml(__('Sku')) ?>" class="col item">
+                        <strong class="product-item-name"><?= $block->escapeHtml($_item->getSku()) ?></strong>
+                        <input type="hidden" class="subproduct-id" data-product-id="<?= $block->escapeHtmlAttr($_item->getId()) ?>" value="" />
+                    </td>
+                    <?php if (($stockCheck!=0 && $guestStockConfig!=0) || $_product->isSaleable()) : ?>
+                        <td data-th="<?= $block->escapeHtml(__('Qty')) ?>" class="col qty">
+                            <?php if ($_product->isSaleable()) : ?>
+                                <div class="control qty">
+                                    <input type="number"
+                                           name="super_group[<?= $block->escapeHtmlAttr($_item->getId()) ?>]"
+                                           data-selector="super_group[<?= $block->escapeHtmlAttr($_item->getId()) ?>]"
+                                           value="0"
+                                           title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"
+                                           class="input-text qty"
+                                           product_id="<?= $block->escapeHtmlAttr($_item->getId()) ?>"
+                                           data-validate="{'validate-grouped-qty':'#super-product-table'}"
+                                           data-errors-message-box="#validation-message-box"/>
+                                    <input type="hidden" name="req_qty_<?= $block->escapeHtmlAttr($_item->getId()) ?>" class="req_qty_<?= $block->escapeHtmlAttr($_item->getId()) ?>" value="" />
+                                </div>
+                                <span class="grouped_out_of_stock_check_<?= $block->escapeHtmlAttr($_item->getId()) ?>" style="display: none; color: red;"><strong>The requested quantity is not available.
+</strong></span>
+                            <?php endif; ?>
+                            <?php if ($stockCheck != 0 && $guestStockConfig != 0) : ?>
+                                <div style="display: none;" id="stock_unavailable_<?= $block->escapeHtmlAttr($_item->getId()) ?>" class="stock unavailable" title="<?= $block->escapeHtmlAttr(__('Availability')) ?>">
+                                    <span><?= $block->escapeHtml(__('Out of stock')) ?></span>
+                                </div>
+                                <div style="display: none;" id="stock_available_<?= $block->escapeHtmlAttr($_item->getId()) ?>" class="stock available" title="<?= $block->escapeHtmlAttr(__('Availability')) ?>">
+                                    <span><?= $block->escapeHtml(__('In Stock')) ?></span>
+                                    <div class="availability only">
+                                        <?= __('Only ') ?><span style="font-weight: bold;"><?= $block->escapeHtmlAttr($_item->getQty() * 1) ?></span><?= __(' left') ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </td>
+                    <?php endif; ?>
+                    <?php if ($_product->isSaleable()) : ?>
+                        <td>
+                            <div class="custom_uom_<?= $block->escapeHtmlAttr($_item->getId()) ?>"></div>
+                            <input type="hidden" id="erp_grouped_price_<?= $block->escapeHtmlAttr($_item->getId()) ?>" name="super_group_price[<?= $block->escapeHtmlAttr($_item->getId()) ?>]" value="" />
+                        </td>
+                    <?php endif; ?>
+
+                </tr>
+                <?php if ($block->getCanShowProductPrice($_product)
+                    && $block->getCanShowProductPrice($_item)
+                    && trim($block->getProductPriceHtml(
+                        $_item,
+                        \Magento\Catalog\Pricing\Price\TierPrice::PRICE_CODE
+                    ))) : ?>
+                    <tr class="row-tier-price">
+                        <td colspan="2">
+                            <?= $block->getProductPriceHtml(
+                                $_item,
+                                \Magento\Catalog\Pricing\Price\TierPrice::PRICE_CODE
+                            ) ?>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            </tbody>
+        <?php else : ?>
+            <tbody>
+            <tr>
+                <td class="unavailable"
+                    colspan="<?php if ($_product->isSaleable()) : ?>4<?php else : ?>3<?php endif; ?>">
+                    <?= $block->escapeHtml(__('No options of this product are available.')) ?>
+                </td>
+            </tr>
+            </tbody>
+        <?php endif; ?>
+    </table>
+</div>
+<div id="validation-message-box"></div>
+<script >
+    require([
+        "jquery",
+    ], function ($ ) {
+        $(document).ready(function () {
+            $(".qty").keyup(function(){
+                var qty = $(this).val();
+                var id = $(this).attr("product_id");
+                $(".req_qty_"+id).val(qty);
+            });
+
+        });
+
+    });
+</script>

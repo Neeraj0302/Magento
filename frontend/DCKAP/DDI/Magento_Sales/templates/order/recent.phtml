@@ -1,0 +1,57 @@
+<?php
+$orders = $this->helper('DCKAP\QuickRFQ\Helper\Data')->getRecentOrders();
+?>
+<div class="block block-dashboard-orders">
+    <div class="block-title order">
+        <strong><?= /* @escapeNotVerified */ __('Recent Orders') ?></strong>
+        <?php if (!empty($orders)): ?>
+            <a class="action view" href="<?= /* @escapeNotVerified */ $block->getUrl('quickrfq/order/history') ?>">
+                <span><?= /* @escapeNotVerified */ __('View All') ?></span>
+            </a>
+        <?php endif; ?>
+    </div>
+    <div class="block-content">
+    <?php
+    if (is_string($orders)) { ?>
+        <div class="message info empty"><span><?= __($orders) ?></span></div>
+    <?php } elseif (isset($orders['isValid']) && $orders['isValid'] == 'no') { ?>
+        <div class="message info empty"><span><?= __($orders['errorMessage']) ?></span></div>
+    <?php } elseif (isset($orders['data']['isValid']) && $orders['data']['isValid'] == 'no') { ?>
+        <div class="message info empty"><span><?= __($orders['data']['errorMessage']) ?></span></div>
+    <?php } elseif (isset($orders['isValid']) && $orders['isValid'] == 'yes') {
+        if (!empty($orders)):
+            $viewUrl = $block->getUrl('quickrfq/order/view');
+            ?>
+            <div class="table-wrapper orders-history">
+                <table class="data table table-order-pad" id="my-orders-table">
+                    <caption class="table-caption"><?= __('Order List') ?></caption>
+                    <thead>
+                    <tr>
+                        <th scope="col" class="col order-number"><?= __('Order #') ?></th>
+                        <th scope="col" class="col order-date"><?= __('Date') ?></th>
+                        <th scope="col" class="col ship-date"><?= __('Ship Date') ?></th>
+                        <th scope="col" class="col order-total"><?= __('Order Total') ?></th>
+                        <th scope="col" class="col status"><?= __('Order Status') ?></th>
+                        <th scope="col" class="col actions"><?= __('Action') ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($orders['orderList'] as $item): ?>
+                        <tr class="content">
+                            <td class="col order-number"><?php echo $item['orderNumber']; ?></td>
+                            <td class="col order-date"><?php echo $item['orderDate']; ?></td>
+                            <td class="col ship-date"><?php echo $item['shipDate']; ?></td>
+                            <td class="col order-total"><?php echo $item['orderTotal']; ?></td>
+                            <td class="col status"><?php echo $item['orderStatus']; ?></td>
+                            <td class="col actions"><a href="<?php echo $viewUrl.'id/'.$item['orderNumber']; ?>" title="View Order" class="action view"><span>View Order</span></a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="message info empty"><span><?= /* @escapeNotVerified */ __('You have no orders at this time') ?></span></div>
+        <?php endif;
+    } ?>
+    </div>
+</div>

@@ -1,0 +1,103 @@
+<?php
+	/**
+	 * Copyright © Magento, Inc. All rights reserved.
+	 * See COPYING.txt for license details.
+	 */
+
+	// @codingStandardsIgnoreFile
+
+?>
+<style type="text/css">
+    .base {
+        display: none;
+    }
+</style>
+<?php /** @var $block \Magento\Checkout\Block\Onepage\Success */ ?>
+<?php $dckapCheckoutHelper = $this->helper('DCKAP\Checkout\Helper\Data');
+	$order = $dckapCheckoutHelper->getOrder($block->getOrderId());
+	$errorMsg = $dckapCheckoutHelper->getERPErrorMessage();
+    //$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    //$customerSession = $objectManager->create('Magento\Customer\Model\Session');
+
+    if (empty($errorMsg))
+    {
+	if ($order->getStatus()=='pending_approval') {
+		$orderUrl = $block->getUrl('orderapproval/index/submittedorders');
+		?>
+        <div class="checkout-success">
+            <p><?= __('Your order has been submitted for approval.') ?> <a href="<?= $orderUrl ?>" title="View Order">Click
+                    here</a> to see your order.</p>
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <a class="action primary continue" href="<?= /* @escapeNotVerified */
+						$block->getContinueUrl() ?>"><span><?= /* @escapeNotVerified */
+								__('Continue Shopping') ?></span></a>
+                </div>
+            </div>
+        </div>
+	<?php } else {
+		$orderUrl = $block->getUrl('quickrfq/order/view/');
+		?>
+        <div class="checkout-success">
+			<?php if ($block->getOrderId()): ?>
+				<?php if ($block->getCanViewOrder()) : ?>
+                    <p><?= __('Your order number is: %1.', sprintf('<a href="%s" class="order-number"><strong>%s</strong></a>', $block->escapeHtml($orderUrl . 'id/' . $order->getDdiOrderId()), $block->escapeHtml($order->getDdiOrderId()))) ?></p>
+				<?php else : ?>
+                    <p><?= __('Your order # is: <span>%1</span>.', $block->escapeHtml($order->getDdiOrderId())) ?></p>
+				<?php endif; ?>
+                <p>We truly appreciate you choosing us for your supplies. We will email a confirmation momentarily with
+                     order details. Check back on your account to see order status updates and tracking information as it
+                    becomes available.</p>
+			<?php endif; ?>
+
+			<?= $block->getAdditionalInfoHtml() ?>
+
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <a class="action primary continue" href="<?= /* @escapeNotVerified */
+						$block->getContinueUrl() ?>"><span><?= /* @escapeNotVerified */
+								__('Continue Shopping') ?></span></a>
+                </div>
+            </div>
+        </div>
+        <?php }
+    } else { ?>
+        <div class="message info empty"><span><?= /* @escapeNotVerified */ __($errorMsg) ?></span></div>
+        <div>
+            <?php if ($block->getOrderId()): ?>
+                  <?php ?>
+                    <p><?= __('Your order # is: ') ?></p>
+                <?php ?>
+                <p>We truly appreciate you choosing us for your supplies. We will email a confirmation momentarily with
+                    order details. Check back on your account to see order status updates and tracking information as it
+                    becomes available.</p>
+            <?php endif; ?>
+
+            <?= $block->getAdditionalInfoHtml() ?>
+
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <a class="action primary continue" href="<?= /* @escapeNotVerified */
+                    $block->getContinueUrl() ?>"><span><?= /* @escapeNotVerified */
+                            __('Continue Shopping') ?></span></a>
+                </div>
+            </div>
+        </div>
+	<?php } ?>
+
+<script>
+    require(['jquery'], function ($) {
+        $(document).ready(function () {
+            $(".base").html("");
+            $(".base").css("display", "block");
+            var status = "<?php echo $order->getStatus(); ?>";
+            console.log(status);
+            if (status != "pending_approval") {
+                $(".base").html("Thank you for your purchase!");
+            } else {
+                $(".base").html("Thank you for your order!");
+            }
+        })
+    });
+</script>
+
